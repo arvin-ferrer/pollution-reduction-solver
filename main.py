@@ -4,7 +4,7 @@ import numpy as np
 from utils.simplex import SimplexSolver
 from time import sleep
 from utils.createTableau import createTableau
-st.set_page_config(layout="wide", page_title="Test")
+st.set_page_config(layout="wide", page_title="ReductionPlan")
 @st.cache_data
 
 def loadData():
@@ -81,7 +81,7 @@ with st.sidebar:
 
 
 # main Display page
-st.title("City Pollution Reduction Solver")
+st.title("City Pollution test")
 
 # only proceed if data was loaded and not null
 if projectsDF is not None:
