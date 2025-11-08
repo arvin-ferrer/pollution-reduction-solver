@@ -4,8 +4,9 @@ import numpy as np
 from utils.simplex import SimplexSolver
 from time import sleep
 from utils.createTableau import createTableau
-st.set_page_config(layout="wide", page_title="Pollution Reduction Solver")
+st.set_page_config(layout="wide", page_title="Test")
 @st.cache_data
+
 def loadData():
     # loads CSV data.
     try:
