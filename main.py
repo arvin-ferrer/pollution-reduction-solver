@@ -81,7 +81,7 @@ with st.sidebar:
 
 
 # main Display page
-st.title("City Pollution test")
+st.title("City Pollution Reduction Solver")
 
 # only proceed if data was loaded and not null
 if projectsDF is not None:
