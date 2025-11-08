@@ -11,9 +11,9 @@ class SimplexSolver:
         n, m = tableau.shape
         n -= 1  # last row is objective function
 
-        final = {} # Dictionary to store results
+        final = {} # dictionary to store results
         
-        # List to store iteration
+        # list to store iteration
         tableauList = []
         objectiveRowList = []
         
@@ -24,7 +24,7 @@ class SimplexSolver:
             objectiveRowList.append(tableau[n, :].copy())
             iteration += 1
             
-            PC = np.argmin(tableau[n, :m-1]) # Pivot Column
+            PC = np.argmin(tableau[n, :m-1]) # pivot Column
             
             ratios = np.full(n, np.inf)
             for i in range(n):
@@ -32,7 +32,7 @@ class SimplexSolver:
                     ratios[i] = tableau[i, -1] / tableau[i, PC]
 
             if np.all(np.isinf(ratios)):
-                final['status'] = 'Infeasible/Unbounded'
+                final['status'] = 'Infeasible'
                 final['finalTableau'] = tableau
                 final['basicSolution'] = np.zeros(numVars)
                 final['Z'] = np.inf
@@ -40,19 +40,19 @@ class SimplexSolver:
                 final['objectiveRowList'] = objectiveRowList 
                 return final
 
-            PR = np.argmin(ratios) # Pivot Row
+            PR = np.argmin(ratios) # pivot Row
 
-            tableau[PR, :] /= tableau[PR, PC] # Normalize
+            tableau[PR, :] /= tableau[PR, PC] # normalize
 
             for i in range(n + 1):
                 if i != PR:
                     tableau[i, :] -= tableau[i, PC] * tableau[PR, :]
         
-        # Add the final optimal tableau
+        # add the final optimal tableau
         tableauList.append(tableau.copy())
         objectiveRowList.append(tableau[n, :].copy())
         
-        # Extracting the final solution
+        # extracting the final solution
         basicSolution = np.zeros(numVars)
         for j in range(numVars):
             col = tableau[:n, j]
@@ -73,52 +73,6 @@ class SimplexSolver:
         final['status'] = 'Optimal'
 
         return final
-
-
-def createBigMTableau(costVectorC, pollutantMatrixApoll, targetVectorBpoll):
-    M = 1e9
-    numProjects = len(costVectorC)
-    numPollutants = len(targetVectorBpoll)
-    numConstraints = numPollutants + numProjects
-
-    numVars = numProjects
-    numSurplus = numPollutants
-    numSlack = numProjects
-    numArtificial = numPollutants
-
-    numCols = numVars + numSurplus + numSlack + numArtificial + 2
-    numRows = numConstraints + 1
-    tableau = np.zeros((numRows, numCols))
-
-    # Pollutant constraints
-    tableau[:numPollutants, :numProjects] = pollutantMatrixApoll
-    for i in range(numPollutants):
-        tableau[i, numProjects + i] = -1.0          
-        tableau[i, numProjects + numSurplus + numSlack + i] = 1.0  
-    tableau[:numPollutants, -1] = targetVectorBpoll
-
-    # Project upper bound constraints
-    for i in range(numProjects):
-        rowIdx = numPollutants + i
-        tableau[rowIdx, i] = 1.0
-        tableau[rowIdx, numProjects + numSurplus + i] = 1.0 # slack
-    tableau[numPollutants:numConstraints, -1] = 20.0 
-
-
-    zRowIdx = numConstraints
-    
-    tableau[zRowIdx, :numProjects] = costVectorC
-    
-    for i in range(numArtificial):
-        colIdx = numVars + numSurplus + numSlack + i
-        tableau[zRowIdx, colIdx] = M
-        
-    tableau[zRowIdx, -2] = 1.0 # The Z' column
-
-    for i in range(numPollutants):
-        tableau[zRowIdx, :] -= M * tableau[i, :]
-
-    return tableau
 
 # if __name__ == "__main__":
 #     np.set_printoptions(precision=6, suppress=True, linewidth=150)

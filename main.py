@@ -1,61 +1,61 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from utils.simplex import SimplexSolver, createBigMTableau
-
+from utils.simplex import SimplexSolver
+from time import sleep
+from utils.createTableau import createTableau
 st.set_page_config(layout="wide", page_title="Pollution Reduction Solver")
-
 @st.cache_data
-def load_data():
-    #Loads CSV data.
+def loadData():
+    # loads CSV data.
     try:
-        projects_df = pd.read_csv('data/projects_matrix.csv')
-        targets_df = pd.read_csv('data/pollutant_targets.csv')
+        projectsDF = pd.read_csv('data/projects_matrix.csv')
+        targetsDF = pd.read_csv('data/pollutant_targets.csv')
         
-        # Get the 10 pollutant names from the targets file
-        pollutant_cols = targets_df['Pollutant'].tolist()
+        # get the 10 pollutant names from the targets file
+        pollutantCols = targetsDF['Pollutant'].tolist()
         
-        return projects_df, targets_df, pollutant_cols
+        return projectsDF, targetsDF, pollutantCols
     except FileNotFoundError as e:
-        # Show error on main page if files not found
+        # show error on main page if files not found
         st.error(f"Error loading data: {e}. Make sure 'data' folder and CSV files exist.")
         return None, None, None
-# Clearing selections
-def clear_selections():
+# clearing selections
+def clearSelections():
     st.session_state.project_selector = []
 
 # loading the dataframe
-projects_df, targets_df, pollutant_cols = load_data()
+projectsDF, targetsDF, pollutantCols = loadData()
 
-# Streamlit Sidebar controls
+# streamlit sidebar controls
 with st.sidebar:
-    st.title("Solver Controls")
+    st.title("Controls")
     st.markdown("Select mitigation projects and run the solver.")
     
-    if projects_df is not None:
+    if projectsDF is not None:
         st.header("1. Select Projects")
         
-        project_names_list = projects_df['Project Name'].tolist()
+        project_names_list = projectsDF['Project Name'].tolist()
         
         selected_project_names = st.multiselect(
             "Choose projects to include:",
             options=project_names_list,
-            default=project_names_list, # "Check all" by default
+            default=project_names_list, # "check all the projects"  by default
             key='project_selector'
         )
 
         st.button(
-            'Reset Selection', 
-            on_click=clear_selections,
+            'Reset', 
+            on_click=clearSelections,
             help="Deselects all projects.",
             use_container_width=True
         )
         
         st.markdown("---")
 
-        # Start button to start solving
+        # start button to start solving
         solve_button = st.button(
-            "Start Solving",
+            "Solve",
             type="primary", 
             use_container_width=True
         )
@@ -68,110 +68,173 @@ with st.sidebar:
         )
 
         if project_to_inspect:
-           project_data = projects_df[projects_df['Project Name'] == project_to_inspect]
-           st.dataframe(project_data, use_container_width=True)
+           projectData = projectsDF[projectsDF['Project Name'] == project_to_inspect]
+           st.dataframe(projectData, use_container_width=True)
         else:
            st.error("Data files not found.")
+        st.markdown("---")
+        st.subheader("About")
+        st.info("This app was built for CMSC150 Final Project. \n\n"
+            "**Author:** Arvin Ferrer\n\n"
+            "**Section:** AB2L")
 
 
-# Main Display page
+# main Display page
 st.title("City Pollution Reduction Solver")
 
-# Only proceed if data was loaded and not null
-if projects_df is not None:
+# only proceed if data was loaded and not null
+if projectsDF is not None:
     
-    # Solver Execution (solve button)
+    # solver execution (initialize the simplex)
     if solve_button:
-        st.header("2. Solver Results")
         if not selected_project_names:
             st.warning("Please select at least one project from the sidebar.")
         else:
             with st.spinner("Running Simplex Algorithm..."):
+                sleep(3)
                 try:
-                    # FIltering the Project Name from the selected project names to see if it exists in the csv
-                    filtered_df = projects_df[projects_df['Project Name'].isin(selected_project_names)].copy()
-                    filtered_df['Project Name'] = pd.Categorical(filtered_df['Project Name'], categories=selected_project_names, ordered=True)
-                    filtered_df = filtered_df.sort_values('Project Name')
-                    costVectorC = filtered_df['Costs'].values
-                    pollutantMatrixApoll_raw = filtered_df[pollutant_cols].values 
-                    targetVectorBpoll = targets_df.set_index('Pollutant').loc[pollutant_cols, 'Target'].values
-                    num_decision_vars = len(costVectorC)
-                    tableau = createBigMTableau(costVectorC, pollutantMatrixApoll_raw.T, targetVectorBpoll)
+                    st.header("2. Solver Results")
+                    
+                    # initializing tabs
+                    tab1, tab2, tab3 = st.tabs(["Optimal Solution", "Simplex Iterations", "Input data"])
+
+                    # fIltering the project name from the selected project names
+                    filteredDF = projectsDF[projectsDF['Project Name'].isin(selected_project_names)].copy()
+                    filteredDF['Project Name'] = pd.Categorical(filteredDF['Project Name'], categories=selected_project_names, ordered=True)
+                    filteredDF = filteredDF.sort_values('Project Name')
+                    costVectorC = filteredDF['Costs'].values
+                    pollutantMatrix =  filteredDF[pollutantCols].values 
+                    targetPollutants = targetsDF.set_index('Pollutant').loc[pollutantCols, 'Target'].values
+                    n = len(costVectorC)
+
+                    tableau = createTableau(costVectorC, pollutantMatrix.T, targetPollutants)
                     solver = SimplexSolver()
-                    result = solver.solve(tableau, numVars=num_decision_vars, costVectorC=costVectorC)
+                    result = solver.solve(tableau, numVars=n, costVectorC=costVectorC)
 
-                    # Displaying the result
-                    tableau_Z = result['finalTableau'][-1, -1]
-                    
-                    if result['status'] == 'Infeasible/Unbounded' or tableau_Z < -1e8:
-                        st.error("The problem is not feasible.", icon="❌")
-                        st.write("The selected combination of projects cannot meet the required pollutant reduction targets.")
-                    
-                    elif result['status'] == 'Optimal':
-                        st.success("Optimal Solution Found!", icon="✅")
-                        st.metric("Minimum Total Cost (Z)", f"${result['Z']:,.2f}")
+                   # displaying the result for tab 1
+                    with tab1:
+                        tableauZ = result['finalTableau'][-1, -1]
                         
-                        solution_df = pd.DataFrame({
-                            'Mitigation Project': filtered_df['Project Name'].tolist(),
-                            'Project Units (x_i)': result['basicSolution'],
-                            'Total Cost': result['basicSolution'] * costVectorC
-                        })
+                        if result['status'] == 'Infeasible' or tableauZ < -1e9:
+                            # st.error("The problem is not feasible.")
+                            st.badge("Failed", icon='❌', color='red')
+                            st.write("The selected combination of projects doesn't meet the required pollutant reduction targets.")
                         
-                        solution_df = solution_df[solution_df['Project Units (x_i)'] > 1e-6]
-                        solution_df['Project Units (x_i)'] = solution_df['Project Units (x_i)'].map('{:,.4f}'.format)
-                        solution_df['Total Cost'] = solution_df['Total Cost'].map('${:,.2f}'.format)
-                        
-                        st.subheader("Final Project Implementation")
-                        st.dataframe(solution_df, use_container_width=True)
-
-
-                        # Convert the dataframe to CSV format Downloading it
-                        @st.cache_data
-                        def convert_df_to_csv(df):
-                            return df.to_csv(index=False).encode('utf-8')
-
-                        csv_data = convert_df_to_csv(solution_df)
-                        # Download button
-                        st.download_button(
-                            label="Download Solution as CSV",
-                            data=csv_data,
-                            file_name="project_solution.csv",
-                            mime="text/csv",
-                            use_container_width=True
-                        )                         
-                        # Display Iterations 
-                        st.markdown("---")
-                        st.subheader("Simplex Iterations (Step-by-Step)")
-                        with st.expander("Show/Hide All Iteration Tableaus"):
-                            tableau_list = result.get('tableauList', [])
-                            obj_row_list = result.get('objectiveRowList', [])
+                        elif result['status'] == 'Optimal':
+                            # st.success("Optimal Solution Found")
+                            st.badge("Success", icon=':material/check:', color='green') 
+                            # create DataFrame using costs from the basic solution
+                            solutionDF = pd.DataFrame({
+                                'Mitigation Project':   filteredDF['Project Name'].tolist(),
+                                'Project Units (x_i)': result['basicSolution'],
+                                'Total Cost': result['basicSolution'] * costVectorC
+                            })
                             
-                            if not tableau_list:
-                                st.warning("Iteration list not found in solver result.")
-                            else:
-                                st.info(f"The solver found the solution in {len(tableau_list) - 1} iterations.")
-                                for i, tableau_step in enumerate(tableau_list):
+                            # creating the Chart DataFrame to be use for chart visualization
+                            chartDF = solutionDF[solutionDF['Project Units (x_i)'] > 1e-6].copy()
+
+                            # creating the metrics
+                            col1, col2 = st.columns(2)
+                            col1.metric("Minimum Total Cost (Z)", f"${result['Z']:,.2f}")
+                            col2.metric("Projects Implemented", f"{len(chartDF)}")
+                            
+                            st.subheader("Visual Solution")
+                            
+                            c1, c2 = st.columns(2)
+                            
+                            # creating charts from the chart dataframe
+                            with c1:
+                                st.write("Project Units Implemented")
+                                st.bar_chart(chartDF, x='Mitigation Project', y='Project Units (x_i)')
+                            with c2:
+                                st.write("Cost Breakdown")
+                                st.vega_lite_chart(chartDF, {
+                                    'mark': {'type': 'arc', 'tooltip': True},
+                                    'encoding': {
+                                        'theta': {
+                                            'field': 'Total Cost', 
+                                            'type': 'quantitative', 
+                                            'stack': True
+                                        },
+                                        'color': {
+                                            'field': 'Mitigation Project', 
+                                            'type': 'nominal',
+                                            'title': 'Project'
+                                        },
+                                        'tooltip': [
+                                            {'field': 'Mitigation Project', 'type': 'nominal'},
+                                            {'field': 'Total Cost', 'type': 'quantitative', 'format': '$,.2f'}
+                                        ]
+                                    }
+                                }, use_container_width=True)
+
+                            # format the dataframe for Table Display 
+                            solutionDFnew = chartDF.copy()
+                            solutionDFnew['Project Units (x_i)'] = solutionDFnew['Project Units (x_i)'].map('{:,.4f}'.format)
+                            solutionDFnew['Total Cost'] = solutionDFnew['Total Cost'].map('${:,.2f}'.format)
+                             
+                            st.subheader("Final Project Implementation (Table)")
+                            # all_cols = solutionDFnew.columns.tolist()
+                            # options = st.multiselect("Select columns to display:", all_cols, default=all_cols)                            # st.dataframe(solutionDFnew, use_container_width=True)
+                            # st.dataframe(options, use_container_width=True)
+                            st.dataframe(solutionDFnew, use_container_width=True)
+                            # setup download button 
+                            @st.cache_data
+                            def convert_df_to_csv(df):
+                                # use the formatted dataframe for the CSV
+                                return df.to_csv(index=False).encode('utf-8')
+
+                            csvData = convert_df_to_csv(solutionDFnew)
+                            
+                            st.download_button(
+                                label="Download Solution as CSV",
+                                data=csvData,
+                                file_name="project_solution.csv",
+                                mime="text/csv",
+                                use_container_width=True
+                            )
+                    with tab2:
+                        st.subheader("Simplex Iterations (Step-by-Step)")
+                        
+                        tableauList = result.get('tableauList', [])
+                        # objRow = result.get('objectiveRowList', [])
+                        
+                        if not tableauList:
+                            st.warning("Iteration list not found in solver result.")
+                        else:
+                            st.info(f"The solver found the solution in {len(tableauList) - 1} iterations.")
+                            with st.expander("Show/Hide All Iteration Tableaus"):
+                                for i, tableauSteps in enumerate(tableauList):
                                     st.markdown(f"**Iteration {i}**")
-                                    if i < len(obj_row_list):
-                                        st.write("Objective Row:")
-                                        st.dataframe(pd.DataFrame(obj_row_list[i]).T)
-                                    st.dataframe(pd.DataFrame(tableau_step))
+                                    # if i < len(objRow):
+                                    #     st.write("Objective Row:")
+                                    #     st.dataframe(pd.DataFrame(objRow[i]).T)
+                                    st.dataframe(pd.DataFrame(tableauSteps))
                                     st.markdown("---")
+                    with tab3:
+                            # st.markdown("---")
+                        with st.expander("Show Input Data Files", expanded=True):
+                            
+                            st.subheader("Projects Matrix (`projects_matrix.csv`)")
+                            st.dataframe(projectsDF, use_container_width=True)
+                            
+                            st.subheader("Pollutant Targets (`pollutant_targets.csv`)")
+                            st.dataframe(targetsDF, use_container_width=True)
 
                 except Exception as e:
                     st.error(f"An error occurred during solving: {e}")
                     import traceback
                     st.exception(e)
     else:
-        # This is the default message on the main page before solving
-        st.info("Select projects from the sidebar and click 'Start Solving' to see the results.")
+        # default message on the main page before solving
+        st.info("Select projects from the sidebar and click 'Solve' to see the results.")
 
-    # Show Input Data 
-    st.markdown("---")
-    with st.expander("Show Input Data Files"):
+    # show Input Data 
+    # st.markdown("---")
+    # with st.expander("Show Input Data Files", expanded=False):
         
-        st.subheader("Projects Matrix (`projects_matrix.csv`)")
-        st.dataframe(projects_df, use_container_width=True)
+    #     st.subheader("Projects Matrix (`projects_matrix.csv`)")
+    #     st.dataframe(projectsDF, use_container_width=True)
         
-        st.subheader("Pollutant Targets (`pollutant_targets.csv`)")
-        st.dataframe(targets_df, use_container_width=True)
+    #     st.subheader("Pollutant Targets (`pollutant_targets.csv`)")
+    #     st.dataframe(targetsDF, use_container_width=True)
