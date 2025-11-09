@@ -2,7 +2,7 @@ import pandas as pd
 
 columns = ["Costs", "CO2", "NOx", "SO2", "PM2.5", "CH4", "VOC", "CO", "NH3", "BC", "N2O"]
 
-project_full_names = [
+projects = [
     "Large Solar Park", "Small Solar Installations", "Wind Farm", 
     "Gas-to-renewables conversion", "Boiler Retrofit", 
     "Catalytic Converters for Buses", "Diesel Bus Replacement", 
@@ -53,9 +53,9 @@ data_vector = [
     400, 9, 0.4, 0.05, 0.05, 0.01, 0.3, 2.5, 0.01, 0.01, 0.01
 ]
 data = [data_vector[i:i+11] for i in range(0, len(data_vector), 11)]
-df_projects = pd.DataFrame(data, columns=columns, index=project_full_names)
-df_projects.to_csv("projects_matrix.csv", index_label="Project Name")
-print("projects_matrix.csv created successfully!")
+projectsDF = pd.DataFrame(data, columns=columns, index=projects)
+projectsDF.to_csv("projects.csv", index_label="Project Name")
+print("projects.csv created successfully!")
 
 pollutant_names = ["CO2", "NOx", "SO2", "PM2.5", "CH4", "VOC", "CO", "NH3", "BC", "N2O"]
 target_values = [1000, 35, 25, 20, 60, 45, 80, 12, 6, 10]
@@ -65,5 +65,5 @@ df_targets = pd.DataFrame({
     "Target": target_values
 })
 
-df_targets.to_csv("pollutant_targets.csv", index=False)
-print("pollutant_targets.csv created successfully!")
+df_targets.to_csv("pollutant.csv", index=False)
+print("pollutant.csv created successfully!")
