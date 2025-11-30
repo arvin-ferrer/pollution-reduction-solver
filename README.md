@@ -14,7 +14,7 @@ It features a fully custom **Simplex Algorithm** implementation written in Pytho
 ## Usage Guide
 
 - 1. **Select Projects** - Choose which mitigation projects to include using the sidebar. Use Select All to select all projects.
-- 2. **Inspect Data** - 
+- 2. **Inspect Data** - View the details of the individual projects.
 - 3. **Click Solve** - The system constructs and iterates through the Simplex tableau.
 - 4. **Analyze Results** 
 	- Optimal Solution: Minimum cost, chosen project units, pollutant reduction charts.
