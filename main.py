@@ -124,7 +124,7 @@ if projectsDF is not None:
         n_vars = data["n_vars"]
         p_cols = data["pollutantCols"]
 
-        st.header("2. Solver Results")
+        st.header("Solver Results")
         tab1, tab2, tab3, tab4 = st.tabs(["Optimal Solution", "Simplex Iterations", "Input Data", "About"])
 
         # optimal Solution 
