@@ -20,7 +20,6 @@ It features a fully custom **Simplex Algorithm** implementation written in Pytho
 - Input Data: Inspect raw CSV tables used as the model’s basis.
 
 ---
-
 ## Problem Statement
 
 The system models the optimization task as a **Minimization Linear Programming** problem.
@@ -28,12 +27,12 @@ The system models the optimization task as a **Minimization Linear Programming**
 ### 1. Mathematical Formulation
 
 - **Decision Variables:**  
-  \( x_j \) = number of units to allocate for mitigation project \( j \)
+  \( x_j \): number of units allocated to mitigation project \( j \)
 
 - **Parameters:**  
-  \( C_j \) = cost per unit of project \( j \)  
-  \( a_{ij} \) = reduction of pollutant \( i \) provided by project \( j \)  
-  \( b_i \) = minimum required reduction of pollutant \( i \)
+  \( C_j \): cost per unit of project \( j \)  
+  \( a_{ij} \): reduction of pollutant \( i \) by project \( j \)  
+  \( b_i \): minimum required reduction of pollutant \( i \)
 
 ### Objective Function
 
@@ -48,25 +47,14 @@ Minimize total cost:
 1. **Pollutant Reduction Requirements (\(\ge\))**
 
 \[
-\sum_{j=1}^{30} a_{ij} x_j \ge b_i, \quad i = 1, \dots, 10
+\sum_{j=1}^{30} a_{ij} x_j \ge b_i \quad \text{for } i = 1, \dots, 10
 \]
 
 2. **Project Capacity Limits**
 
 \[
-0 \le x_j \le 20, \quad j = 1, \dots, 30
+0 \le x_j \le 20 \quad \text{for } j = 1, \dots, 30
 \]
-
----
-
-## Solution Strategy (Dual Transformation)
-
-To avoid the complexity and numerical difficulties of the **Big M Method**, the solver transforms the minimization primal problem into its **Dual Maximization** form.
-
-- **Primal:** Minimize cost with ≥ constraints  
-- **Dual:** Maximize value with ≤ constraints
-
-The Simplex algorithm is performed on the Dual tableau, and optimal project decisions \( x_j \) are derived from the final slack coefficients in the optimal Dual objective row.
 
 ---
 
@@ -110,8 +98,8 @@ http://localhost:8501
 ## Technology Stack
 ```
 Python: Core logic and numerical computation
-NumPy: High-speed matrix operations and Simplex processing
-Pandas: Data wrangling and CSV management
+NumPy: Efficient matrix operations and Simplex processing
+Pandas: Data management
 Streamlit: Interactive visualization dashboard
-Altair: Declarative statistical charts
+Altair: Data visualization
 ```
