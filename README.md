@@ -26,35 +26,35 @@ The system models the optimization task as a **Minimization Linear Programming**
 
 ### 1. Mathematical Formulation
 
-- **Decision Variables:**  
-  \( x_j \): number of units allocated to mitigation project \( j \)
+- **Decision Variables:**
+  $x_j$: number of units allocated to mitigation project $j$
 
-- **Parameters:**  
-  \( C_j \): cost per unit of project \( j \)  
-  \( a_{ij} \): reduction of pollutant \( i \) by project \( j \)  
-  \( b_i \): minimum required reduction of pollutant \( i \)
+- **Parameters:**
+  $C_j$: cost per unit of project $j$
+  $a_{ij}$: reduction of pollutant $i$ by project $j$
+  $b_i$: minimum required reduction of pollutant $i$
 
 ### Objective Function
 
 Minimize total cost:
 
-\[
+$$
 \text{Minimize } Z = \sum_{j=1}^{30} C_j x_j
-\]
+$$
 
 ### Constraints
 
-1. **Pollutant Reduction Requirements (\(\ge\))**
+1. **Pollutant Reduction Requirements ($\ge$)**
 
-\[
+$$
 \sum_{j=1}^{30} a_{ij} x_j \ge b_i \quad \text{for } i = 1, \dots, 10
-\]
+$$
 
 2. **Project Capacity Limits**
 
-\[
+$$
 0 \le x_j \le 20 \quad \text{for } j = 1, \dots, 30
-\]
+$$
 
 ---
 
