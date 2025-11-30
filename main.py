@@ -249,7 +249,7 @@ if projectsDF is not None:
                         st.write("**Current Basic Solution:**")
                         st.dataframe(pd.DataFrame([basicSols[index]]), hide_index=True)
                     
-                    st.write("**Full Tableau:**")
+                    st.write("**Tableau:**")
                     st.dataframe(pd.DataFrame(tableauList[index]))
 
                 # show all view
@@ -264,7 +264,7 @@ if projectsDF is not None:
                             st.caption("**Current Basic Solution:**")
                             st.dataframe(pd.DataFrame([basicSols[i]]), hide_index=True)
                         
-                        st.caption("**Full Tableau:**")
+                        st.caption("**Tableau:**")
                         st.dataframe(pd.DataFrame(tableau))
                         st.markdown("---")
 
@@ -379,7 +379,7 @@ if projectsDF is not None:
         st.markdown("""
         This application finds the most cost-effective (minimum cost) solution 
         to meet the city's 10 pollutant reduction targets.
-        
+
         **How to use:**
         1.  Use the **sidebar** to select the projects you want to include.
         2.  Click the **Solve** button.
