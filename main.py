@@ -245,7 +245,7 @@ if projectsDF is not None:
                         st.markdown(f"### Iteration {index}")
                     
                     # show basic solution
-                    if index < len(basicSols):
+                    if index < len(basicSols) and index != 0:
                         st.write("**Current Basic Solution:**")
                         st.dataframe(pd.DataFrame([basicSols[index]]), hide_index=True)
                     
@@ -260,7 +260,7 @@ if projectsDF is not None:
                         else:
                             st.markdown(f"### Iteration {i}")
                         
-                        if i < len(basicSols):
+                        if i < len(basicSols) and i != 0:
                             st.caption("**Current Basic Solution:**")
                             st.dataframe(pd.DataFrame([basicSols[i]]), hide_index=True)
                         
