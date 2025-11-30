@@ -340,7 +340,7 @@ if projectsDF is not None:
             with t2:
                 st.markdown("### NumPy")
                 st.caption("Simplex algorithm")
-                st.write("Used for array manipulation. It handles the Simplex tableau as a matrix, performing Gaussian elimination.")
+                st.write("Used for array manipulation. It handles the Simplex tableau as a matrix, performing Gauss-Jordan elimination.")
             
             with t3:
                 st.markdown("### Pandas")
