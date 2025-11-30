@@ -5,7 +5,7 @@ import altair as alt
 from utils.simplex import SimplexSolver
 from utils.createTableau import createTableau
 from time import sleep
-st.set_page_config(layout="wide", page_title="ReductionPlan")
+st.set_page_config(layout="wide", page_title="ReductionSolver")
 
 # function to load data
 @st.cache_data
@@ -292,7 +292,7 @@ if projectsDF is not None:
                 * **Generating Tableau:** It automatically constructs the matrix based on the user's specific selection of projects.""")
                 
                 # constraints section
-                st.subheader("The Linear Programming Constraints")
+                st.subheader("Problem Statement")
                 st.markdown("""
                 This project models the problem as a **Minimization Linear Programming (LP)** problem:
                 
@@ -300,13 +300,13 @@ if projectsDF is not None:
                 * **Objective Function:**
                     $$ \\text{Minimize } Z = \\sum_{j=1}^{30} (\\text{Cost}_j \\times x_j) $$
                 
-                * **Constraint Set A: Pollutant Reduction ($\ge$)**
+                * **Constraint A: Pollutant Reduction ($\ge$)**
                     $$ \\sum (\\text{Reduction}_{ij} \\times x_j) \\ge \\text{Target}_i \\quad \\text{(for CO}_2, \\text{NO}_x, \\dots) $$
                 
-                * **Constraint Set B: Project Limits ($\le$)**
+                * **Constraint B: Project Limits ($\le$)**
                     $$ x_j \\le 20 \\quad \\text{for all } j $$
                 
-                The solver runs the standard Simplex algorithm on this problem. The optimal unit values ($x_j$) are then extracted directly from the **slack variable coefficients** in the final objective row.
+                The solver runs the standard Simplex algorithm on this problem.
                 """)
             
             with col2:
