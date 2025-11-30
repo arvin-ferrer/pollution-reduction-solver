@@ -144,7 +144,7 @@ if projectsDF is not None:
                 report_df = pd.DataFrame({
                     'Pollutant': p_cols,
                     'Target': targetPollutants,
-                    'Max Possible': max_reduction,
+                    'Achieved': max_reduction,
                     'Shortfall': targetPollutants - max_reduction
                 })
                 report_df = report_df[report_df['Shortfall'] > 1e-6]
@@ -238,22 +238,27 @@ if projectsDF is not None:
 
                 # slider view
                 if view_mode == "Slider View":
-                    iter_idx = st.slider("Select Iteration:", 0, len(tableauList)-1, 0)
+                    index = st.slider("Select Iteration:", 0, len(tableauList)-1, 0)
+                    if index == 0:
+                        st.markdown(f"### Initial Tableau")
+                    else: 
+                        st.markdown(f"### Iteration {index}")
                     
-                    st.markdown(f"### Iteration {iter_idx}")
-                    
-                    # show Basic Solution
-                    if iter_idx < len(basicSols):
-                        st.write("**Current Basic Solution (Last Row):**")
-                        st.dataframe(pd.DataFrame([basicSols[iter_idx]]), hide_index=True)
+                    # show basic solution
+                    if index < len(basicSols):
+                        st.write("**Current Basic Solution:**")
+                        st.dataframe(pd.DataFrame([basicSols[index]]), hide_index=True)
                     
                     st.write("**Full Tableau:**")
-                    st.dataframe(pd.DataFrame(tableauList[iter_idx]))
+                    st.dataframe(pd.DataFrame(tableauList[index]))
 
                 # show all view
                 else:
                     for i, tableau in enumerate(tableauList):
-                        st.markdown(f"### Iteration {i}")
+                        if i == 0:
+                            st.markdown(f"### Initial Tableau")
+                        else:
+                            st.markdown(f"### Iteration {i}")
                         
                         if i < len(basicSols):
                             st.caption("**Current Basic Solution:**")
@@ -265,24 +270,46 @@ if projectsDF is not None:
 
         # about section
         with tab4:
-            # header Section
+            # Header Section
             st.title("About the Project")
-            # organizing project details and overview to columns    
+            
+            # Organizing project details and overview to columns     
             col1, col2 = st.columns([2, 1])
+            
             with col1:
                 st.subheader("Project Overview")
                 st.markdown("""
-                The **City Pollution Reduction Planner** is a system developed to address the challenge of environmental budgeting and pollution of Greenvale City. 
-                By utilizing **Linear Programming** (Simplex Algorithm), the application helps users to select the most cost-effective combination of mitigation projects to satisfy strict reduction contraints for 10 different pollutants.
+                The **City Pollution Reduction Solver** is a system developed to address the challenge of environmental budgeting and pollution for Greenvale City. 
+                
+                By utilizing **Linear Programming** (Simplex Algorithm), the application helps users select the most cost-effective combination of mitigation projects to satisfy strict reduction constraints for 10 different pollutants.
                 """)
+                
                 st.subheader("Algorithm Implementation")
                 st.markdown("""
                 At the core of this project is a custom-built **Simplex Algorithm** written in Python:
-                * Simplex Algorithm (Minimization): The solver handles minimization problems by reconstructing the problem to a maximization problem by converting it to a dual problem and use the simplex method. 
-                * **Matrix Operations:** All the tableau operations (pivoting, normalization, row elimination) are performed using numpy for efficiency.
-                * **Generating Tableau:** It automatically constructs the matrix based on the user's specific selection of projects.
+                * **Dual Simplex Method:** The solver handles minimization problems by reconstructing the problem into a maximization problem (the Dual) and solving it using the standard simplex method. This avoids the need for artificial variables.
+                * **Matrix Operations:** All tableau operations (pivoting, normalization, row elimination) are performed using NumPy for efficiency.
+                * **Dynamic Tableau Generation:** It automatically constructs the constraint matrix based on the user's specific selection of projects.
                 """)
-
+                
+                # Constraints section
+                st.subheader("The Linear Programming Constraints")
+                st.markdown("""
+                This project models the problem as a **Minimization Linear Programming (LP)** problem:
+                
+                #### Mathematical Formulation
+                * **Objective Function:**
+                    $$ \\text{Minimize } Z = \\sum_{j=1}^{30} (\\text{Cost}_j \\times x_j) $$
+                
+                * **Constraint Set A: Pollutant Reduction ($\ge$)**
+                    $$ \\sum (\\text{Reduction}_{ij} \\times x_j) \\ge \\text{Target}_i \\quad \\text{(for CO}_2, \\text{NO}_x, \\dots) $$
+                
+                * **Constraint Set B: Project Limits ($\le$)**
+                    $$ x_j \\le 20 \\quad \\text{for all } j $$
+                
+                The solver runs the standard Simplex algorithm on this problem. The optimal unit values ($x_j$) are then extracted directly from the **slack variable coefficients** in the final objective row.
+                """)
+            
             with col2:
                 st.subheader("Project Details")
                 st.success("""
@@ -294,21 +321,26 @@ if projectsDF is not None:
 
                 **Section:** AB2L
                 """)
+                
+                # for logo
+                # st.image("logo.png", use_container_width=True)
+
             st.markdown("---")
-            # sub section for tech stack used
-            st.subheader("Technology Stack")
-            st.write("This application leverages a powerful stack of open-source Python libraries:")
+            
+            # Sub-section for tech stack used
+            st.subheader("Tech Stack")
+            st.write("This application uses a powerful stack of open-source Python libraries:")
             
             t1, t2, t3, t4 = st.columns(4)
-            # organizing the description of the tech stack used to columns
+            
             with t1:
                 st.markdown("### Python")
-                st.caption("Core Logic (Simplex Algorithm)")
+                st.caption("Core Logic")
                 st.write("The primary programming language used for the backend logic, simplex implementation, and data management.")
             
             with t2:
                 st.markdown("### NumPy")
-                st.caption("Simplex and Tableau Setup")
+                st.caption("Simplex algorithm")
                 st.write("Used for array manipulation. It handles the Simplex tableau as a matrix, performing Gaussian elimination.")
             
             with t3:
@@ -322,7 +354,7 @@ if projectsDF is not None:
                 st.write("A statistical visualization library used to generate the interactive Bar Charts and Pie Charts in the results tab.")
 
             st.markdown("---")
-
+     
         # view the input data
         with tab3:
             st.subheader("Raw Data")
