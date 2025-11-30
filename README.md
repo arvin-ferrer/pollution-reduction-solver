@@ -1,7 +1,5 @@
 # City Pollution Reduction Solver
 
-![Project Logo](logo.png)
-
 > **CMSC 150: Numerical & Symbolic Computation**  
 > **Final Project – Optimization Decision Support System**
 
@@ -112,7 +110,11 @@ http://localhost:8501
 ## Technology Stack
 
 Python: Core logic and numerical computation
+
 NumPy: High-speed matrix operations and Simplex processing
+
 Pandas: Data wrangling and CSV management
+
 Streamlit: Interactive visualization dashboard
+
 Altair: Declarative statistical charts
