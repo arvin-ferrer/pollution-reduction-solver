@@ -379,6 +379,7 @@ if projectsDF is not None:
         st.markdown("""
         This application finds the most cost-effective (minimum cost) solution 
         to meet the city's 10 pollutant reduction targets.
+        
         **How to use:**
         1.  Use the **sidebar** to select the projects you want to include.
         2.  Click the **Solve** button.
