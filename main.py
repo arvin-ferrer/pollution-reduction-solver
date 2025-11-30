@@ -48,19 +48,19 @@ with st.sidebar:
         # organizing buttons to columns
         col1, col2 = st.columns(2)
         with col1:
-            st.button('Reset', on_click=clearSelections, use_container_width=True)
+            st.button('Reset', on_click=clearSelections, width='stretch')
         with col2:
-            st.button('Select All', on_click=selectAll, use_container_width=True)
+            st.button('Select All', on_click=selectAll, width='stretch')
         
         st.markdown("---")
-        solve_button = st.button("Solve", type="primary", use_container_width=True)
+        solve_button = st.button("Solve", type="primary", width='stretch')
         # another section for individual inspection of a project
         st.markdown("---")
         st.header("2. Project Inspector")
         project_to_inspect = st.selectbox("Select a project to view its data:", options=project_names_list)
         if project_to_inspect:
             projectData = projectsDF[projectsDF['Project Name'] == project_to_inspect]
-            st.dataframe(projectData, use_container_width=True)
+            st.dataframe(projectData, width='stretch')
         # about section            
         st.markdown("---")
         st.subheader("About")
@@ -149,7 +149,7 @@ if projectsDF is not None:
                 })
                 report_df = report_df[report_df['Shortfall'] > 1e-6]
                 st.warning("These pollutants failed to meet targets:")
-                st.dataframe(report_df, use_container_width=True)
+                st.dataframe(report_df, width='stretch')
 
             elif result['status'] == 'Optimal':
                 st.success("Optimal Solution Found!")
@@ -183,7 +183,7 @@ if projectsDF is not None:
                             'color': {'field': 'Mitigation Project', 'type': 'nominal'},
                             'tooltip': [{'field': 'Mitigation Project'}, {'field': 'Total Cost', 'format': '$,.2f'}]
                         }
-                    }, use_container_width=True)
+                    }, width='stretch')
 
                 # pollutant analysis chart
                 st.subheader("Pollutant Reduction Analysis")
@@ -204,7 +204,7 @@ if projectsDF is not None:
                     tooltip=['Pollutant', 'Type', 'Amount']
                 ).properties(title='Target vs Achieved').interactive()
                 
-                st.altair_chart(chart, use_container_width=True)
+                st.altair_chart(chart, width='stretch')
 
                 # final table with selection
                 st.subheader("Implementation Plan")
@@ -214,12 +214,12 @@ if projectsDF is not None:
                 
                 all_cols = displayDF.columns.tolist()
                 cols_to_show = st.multiselect("Columns to display:", all_cols, default=all_cols)
-                st.dataframe(displayDF[cols_to_show], use_container_width=True)
+                st.dataframe(displayDF[cols_to_show], width='stretch')
 
                 # downloading the result as csv file
                 @st.cache_data
                 def to_csv(df): return df.to_csv(index=False).encode('utf-8')
-                st.download_button("Download CSV", to_csv(displayDF), "solution.csv", "text/csv", use_container_width=True)
+                st.download_button("Download CSV", to_csv(displayDF), "solution.csv", "text/csv", width='stretch')
 
         # tab 2 with the iterations of the simplex algo
         with tab2:
@@ -287,7 +287,7 @@ if projectsDF is not None:
                 st.subheader("Algorithm Implementation")
                 st.markdown("""
                 At the core of this project is a custom-built **Simplex Algorithm** written in Python:
-                * Simplex Algorithm (Minimization): The solver handles minimization problems by reconstructing the problem to a maximization problem by converting it to a dual problem and use the simplex method. 
+                * **Simplex Algorithm (Minimization)**: The solver handles minimization problems by reconstructing the problem to a maximization problem by converting it to a dual problem and use the simplex method. 
                 * **Matrix Operations:** All the tableau operations (pivoting, normalization, row elimination) are performed using numpy for efficiency.
                 * **Generating Tableau:** It automatically constructs the matrix based on the user's specific selection of projects.""")
                 
@@ -322,7 +322,7 @@ if projectsDF is not None:
                 """)
                 
                 # for logo
-                # st.image("logo.png", use_container_width=True)
+                # st.image("logo.png", width='stretch')
 
             st.markdown("---")
             
