@@ -14,10 +14,10 @@ class SimplexSolver:
         objectiveRowList = []
         basicSolutions = [] 
         
-        max_iter = 1000
+        maxIter = 1000
         iteration = 0
         # gaussian to solve for the minimization  
-        while tableau[n, :m-1].min() < 0 and iteration < max_iter:
+        while tableau[n, :m-1].min() < 0 and iteration < maxIter:
             # append the tableau and objective row per iteration
             tableauList.append(tableau.copy())
             objectiveRowList.append(tableau[n, :].copy())
@@ -58,15 +58,15 @@ class SimplexSolver:
         
         # for the solution table 
         slack_start_col = m - 2 - numVars
-        final_primal_solution = tableau[n, slack_start_col : m-2]
+        finalSol = tableau[n, slack_start_col : m-2]
         # final cost
         Z = tableau[n, -1]
-                
+
         final['tableauList'] = tableauList
         final['objectiveRowList'] = objectiveRowList
         final['basicSolutions'] = basicSolutions 
         final['finalTableau'] = tableau
-        final['basicSolution'] = final_primal_solution #for the charts
+        final['basicSolution'] = finalSol #for the charts
         final['Z'] = Z
         final['status'] = 'Optimal'
 
