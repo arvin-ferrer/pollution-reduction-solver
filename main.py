@@ -270,10 +270,10 @@ if projectsDF is not None:
 
         # about section
         with tab4:
-            # Header Section
+            # header Section
             st.title("About the Project")
             
-            # Organizing project details and overview to columns     
+            # organizing project details and overview to columns     
             col1, col2 = st.columns([2, 1])
             
             with col1:
@@ -287,12 +287,11 @@ if projectsDF is not None:
                 st.subheader("Algorithm Implementation")
                 st.markdown("""
                 At the core of this project is a custom-built **Simplex Algorithm** written in Python:
-                * **Dual Simplex Method:** The solver handles minimization problems by reconstructing the problem into a maximization problem (the Dual) and solving it using the standard simplex method. This avoids the need for artificial variables.
-                * **Matrix Operations:** All tableau operations (pivoting, normalization, row elimination) are performed using NumPy for efficiency.
-                * **Dynamic Tableau Generation:** It automatically constructs the constraint matrix based on the user's specific selection of projects.
-                """)
+                * Simplex Algorithm (Minimization): The solver handles minimization problems by reconstructing the problem to a maximization problem by converting it to a dual problem and use the simplex method. 
+                * **Matrix Operations:** All the tableau operations (pivoting, normalization, row elimination) are performed using numpy for efficiency.
+                * **Generating Tableau:** It automatically constructs the matrix based on the user's specific selection of projects.""")
                 
-                # Constraints section
+                # constraints section
                 st.subheader("The Linear Programming Constraints")
                 st.markdown("""
                 This project models the problem as a **Minimization Linear Programming (LP)** problem:
@@ -327,7 +326,7 @@ if projectsDF is not None:
 
             st.markdown("---")
             
-            # Sub-section for tech stack used
+            # sub-section for tech stack used
             st.subheader("Tech Stack")
             st.write("This application uses a powerful stack of open-source Python libraries:")
             
