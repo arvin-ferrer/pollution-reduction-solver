@@ -15,10 +15,10 @@ def loadData():
         targetsDF = pd.read_csv('data/pollutant_targets.csv')
         pollutantCols = targetsDF['Pollutant'].tolist()
         return projectsDF, targetsDF, pollutantCols
-    except FileNotFoundError as e:
+    except FileNotFoundError as e: # if those csv files doesnt exists
         st.error(f"Error loading data: {e}. Make sure 'data' folder and CSV files exist.")
         return None, None, None
-
+# resetting fuction
 def clearSelections():
     st.session_state.project_selector = []
     # clear results in reset
@@ -30,9 +30,8 @@ projectsDF, targetsDF, pollutantCols = loadData()
 
 # sidebar controls
 with st.sidebar:
-    # st.title("Controls")
     st.markdown("Select mitigation projects and run the solver.")
-    
+    # selection of projects    
     if projectsDF is not None:
         st.header("1. Select Projects")
         project_names_list = projectsDF['Project Name'].tolist()
@@ -46,7 +45,7 @@ with st.sidebar:
             default=project_names_list,
             key='project_selector'
         )
-        
+        # organizing buttons to columns
         col1, col2 = st.columns(2)
         with col1:
             st.button('Reset', on_click=clearSelections, use_container_width=True)
@@ -55,14 +54,14 @@ with st.sidebar:
         
         st.markdown("---")
         solve_button = st.button("Solve", type="primary", use_container_width=True)
-        
+        # another section for individual inspection of a project
         st.markdown("---")
         st.header("2. Project Inspector")
         project_to_inspect = st.selectbox("Select a project to view its data:", options=project_names_list)
         if project_to_inspect:
             projectData = projectsDF[projectsDF['Project Name'] == project_to_inspect]
             st.dataframe(projectData, use_container_width=True)
-            
+        # about section            
         st.markdown("---")
         st.subheader("About")
         st.info("CMSC150 Final Project\n\n**Author:** Arvin Ferrer\n\n**Section:** AB2L")
@@ -79,7 +78,7 @@ if projectsDF is not None:
             st.warning("Please select at least one project from the sidebar.")
         else:
             with st.spinner("Running Simplex Algorithm..."):
-                sleep(2)
+                sleep(2) # waiting time loading
                 try:
                     # filter the data
                     filteredDF = projectsDF[projectsDF['Project Name'].isin(selected_project_names)].copy()
@@ -217,6 +216,7 @@ if projectsDF is not None:
                 cols_to_show = st.multiselect("Columns to display:", all_cols, default=all_cols)
                 st.dataframe(displayDF[cols_to_show], use_container_width=True)
 
+                # downloading the result as csv file
                 @st.cache_data
                 def to_csv(df): return df.to_csv(index=False).encode('utf-8')
                 st.download_button("Download CSV", to_csv(displayDF), "solution.csv", "text/csv", use_container_width=True)
@@ -263,7 +263,7 @@ if projectsDF is not None:
                         st.dataframe(pd.DataFrame(tableau))
                         st.markdown("---")
 
-        # methodology
+        # about section
         with tab4:
             # header Section
             st.title("About the Project")
@@ -272,7 +272,7 @@ if projectsDF is not None:
             with col1:
                 st.subheader("Project Overview")
                 st.markdown("""
-                The **City Pollution Reduction Planner** is a system developed to address the challenge of environmental budgeting and pollution. 
+                The **City Pollution Reduction Planner** is a system developed to address the challenge of environmental budgeting and pollution of Greenvale City. 
                 By utilizing **Linear Programming** (Simplex Algorithm), the application helps users to select the most cost-effective combination of mitigation projects to satisfy strict reduction contraints for 10 different pollutants.
                 """)
                 st.subheader("Algorithm Implementation")
