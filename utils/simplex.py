@@ -3,7 +3,7 @@ import pandas as pd
 class SimplexSolver:
     def __init__(self):
         pass
-    def extract_basic_solution(self, tableau, numVars):
+    def extractBasicSol(self, tableau, numVars):
         n, m = tableau.shape
         n -= 1  # number of constraint rows
         sol = np.zeros(m - 1)
@@ -36,7 +36,7 @@ class SimplexSolver:
             objectiveRowList.append(tableau[n, :].copy())
             
             # basicSolutions.append(tableau[n, :].copy()) 
-            basicSolutions.append(self.extract_basic_solution(tableau, numVars))
+            basicSolutions.append(self.extractBasicSol(tableau, numVars))
 
             iteration += 1
             # getting the pivot column
