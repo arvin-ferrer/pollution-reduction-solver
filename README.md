@@ -108,13 +108,10 @@ The dashboard should automatically open in your browser at:
 http://localhost:8501
 
 ## Technology Stack
-
+```
 Python: Core logic and numerical computation
-
 NumPy: High-speed matrix operations and Simplex processing
-
 Pandas: Data wrangling and CSV management
-
 Streamlit: Interactive visualization dashboard
-
 Altair: Declarative statistical charts
+```
