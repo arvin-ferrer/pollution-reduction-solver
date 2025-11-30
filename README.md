@@ -1,11 +1,13 @@
 # City Pollution Reduction Solver
 
 > **CMSC 150: Numerical & Symbolic Computation**  
-> **Final Project – Optimization Decision Support System**
+> **Final Project**
 
 This project is an interactive Linear Programming (LP) solver designed to help city planners of Greenvale determine the most cost-effective combination of mitigation projects to meet strict environmental pollution targets.
 
 It features a fully custom **Simplex Algorithm** implementation written in Python, integrated into a modern **Streamlit** dashboard with real-time visualization.
+
+### [Click here to try the app](https://pollution-reduction-solver.streamlit.app/)
 
 ---
 
@@ -57,6 +59,8 @@ $$
 $$
 
 ---
+
+
 
 ## Installation & Setup
 
