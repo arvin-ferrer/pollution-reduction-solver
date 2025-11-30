@@ -13,13 +13,13 @@ It features a fully custom **Simplex Algorithm** implementation written in Pytho
 
 ## Usage Guide
 
-- 1. **Select Projects** - Choose which mitigation projects to include using the sidebar. Use Select All to simulate full-budget planning.
+- 1. **Select Projects** - Choose which mitigation projects to include using the sidebar. Use Select All to select all projects.
 - 2. **Inspect Data** - 
 - 3. **Click Solve** - The system constructs and iterates through the Simplex tableau.
 - 4. **Analyze Results** 
 	- Optimal Solution: Minimum cost, chosen project units, pollutant reduction charts.
 	- Simplex Iterations: Step through every tableau iteration using a slider.
-	- Input Data: Inspect raw CSV tables used as the model’s basis.
+	- Input Data: Inspect raw CSV tables used for the project.
 
 ---
 ## Problem Statement
