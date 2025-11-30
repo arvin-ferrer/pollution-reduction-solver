@@ -74,8 +74,8 @@ installed on your system.
 ### 2. Clone the Repository
 
 ```bash
-git clone git@github.com:arvin-ferrer/Project150.git
-cd Project150
+git clone https://github.com/arvin-ferrer/pollution-reduction-solver.git
+cd pollution-reduction-solver
 ```
 ### 3. Set up a Virtual Environment (Recommended but optional)
 
