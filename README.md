@@ -99,7 +99,7 @@ streamlit run main.py
 The dashboard should automatically open in your browser at:
 http://localhost:8501
 
-## Technology Stack
+## Tech Stack
 ```
 Python: Core logic and numerical computation
 NumPy: Efficient matrix operations and Simplex processing
